@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import fi.haagahelia.bookstore.model.Book;
 import fi.haagahelia.bookstore.model.BookRepository;
@@ -45,6 +46,8 @@ public class BookController {
         return "redirect:booklist";
     }
 
+        // f) Chỉ ADMIN mới xóa được sách
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/delete/{id}")
     public String deleteBook(@PathVariable("id") Long bookId) {
         repository.deleteById(bookId);
