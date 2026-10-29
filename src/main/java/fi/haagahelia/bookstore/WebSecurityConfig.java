@@ -24,8 +24,8 @@ public class WebSecurityConfig {
                 .formLogin(formlogin -> formlogin
                         .defaultSuccessUrl("/booklist", true).permitAll())
                 .logout(logout -> logout.permitAll())
-                // Bỏ qua CSRF cho chức năng delete (vì dùng link GET)
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/delete/**"));
+                // Tắt CSRF (cho phép nút Delete dạng link GET hoạt động)
+                .csrf(csrf -> csrf.disable());
         return http.build();
     }
 
