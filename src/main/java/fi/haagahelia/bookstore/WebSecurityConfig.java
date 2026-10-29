@@ -18,18 +18,14 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorize -> authorize
-                // Cho phép tải CSS kể cả khi chưa đăng nhập
-                .requestMatchers("/css/**").permitAll()
-                // Mọi URL còn lại bắt buộc đăng nhập
-                .anyRequest().authenticated()
-            )
-            // Dùng form login mặc định của Spring, đăng nhập xong về /booklist
-            .formLogin(formlogin -> formlogin
-                .defaultSuccessUrl("/booklist", true).permitAll()
-            )
-            // Cho phép logout
-            .logout(logout -> logout.permitAll());
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/css/**").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(formlogin -> formlogin
+                        .defaultSuccessUrl("/booklist", true).permitAll())
+                .logout(logout -> logout.permitAll())
+                // Bỏ qua CSRF cho chức năng delete (vì dùng link GET)
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/delete/**"));
         return http.build();
     }
 
