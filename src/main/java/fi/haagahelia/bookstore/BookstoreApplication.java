@@ -22,29 +22,30 @@ public class BookstoreApplication {
 
     @Bean
     public CommandLineRunner bookstoreRunner(BookRepository repository,
-                                             CategoryRepository categoryRepository,
-                                             AppUserRepository userRepository) {
+            CategoryRepository categoryRepository,
+            AppUserRepository userRepository) {
         return (args) -> {
-            // Tạo category
-            Category fiction = new Category("Fiction");
-            Category classic = new Category("Classic");
-            categoryRepository.save(fiction);
-            categoryRepository.save(classic);
+            // Chỉ nạp dữ liệu mẫu khi database chưa có user nào
+            // (tránh lỗi trùng key khi app khởi động lại trên database thật)
+            if (userRepository.count() == 0) {
 
-            // Tạo sách và gán category
-            repository.save(new Book("A Farewell to Arms", "Ernest Hemingway", 1929, "1232323-21", 19.90, fiction));
-            repository.save(new Book("Animal Farm", "George Orwell", 1945, "2212343-5", 12.50, classic));
+                // Tạo category
+                Category fiction = new Category("Fiction");
+                Category classic = new Category("Classic");
+                categoryRepository.save(fiction);
+                categoryRepository.save(classic);
 
-            // d) Thêm 2 user, hash mật khẩu bằng BCrypt ngay khi lưu
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                // Tạo sách và gán category
+                repository.save(new Book("A Farewell to Arms", "Ernest Hemingway", 1929, "1232323-21", 19.90, fiction));
+                repository.save(new Book("Animal Farm", "George Orwell", 1945, "2212343-5", 12.50, classic));
 
-            // user / user  — role USER
-            userRepository.save(new AppUser("user",
-                    encoder.encode("user"), "user@mjtea.fi", "USER"));
-
-            // admin / admin — role ADMIN
-            userRepository.save(new AppUser("admin",
-                    encoder.encode("admin"), "admin@mjtea.fi", "ADMIN"));
+                // Tạo 2 user, hash mật khẩu BCrypt
+                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                userRepository.save(new AppUser("user",
+                        encoder.encode("user"), "user@mjtea.fi", "USER"));
+                userRepository.save(new AppUser("admin",
+                        encoder.encode("admin"), "admin@mjtea.fi", "ADMIN"));
+            }
         };
     }
 }
