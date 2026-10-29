@@ -46,8 +46,8 @@ public class BookController {
         return "redirect:booklist";
     }
 
-        // f) Chỉ ADMIN mới xóa được sách
-    @PreAuthorize("hasAuthority('ADMIN')")
+    // f) Chỉ ADMIN mới xóa được sách
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/delete/{id}")
     public String deleteBook(@PathVariable("id") Long bookId) {
         repository.deleteById(bookId);
